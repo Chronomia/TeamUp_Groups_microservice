@@ -61,7 +61,7 @@ async def create_group(group: GroupModel):
         intro = group.intro,
         policy = group.policy
     ))
-    return conn.execute(teamup_group_data.select()).fetchall()
+    return conn.execute(teamup_group_data.select().where(teamup_group_data.c.group_id == group.group_id)).fetchone()
 
 
 @router.put("/groups/update/{id}")
@@ -81,13 +81,13 @@ async def update_group_info(id: str, update_group: UpdateGroupModel):
     )
     conn.execute(update_statement, {**update_values, "group_id": id})
 
-    return db_item
+    return conn.execute(teamup_group_data.select().where(teamup_group_data.c.group_id == id)).fetchone()
 
 
 @router.delete("/groups/delete/{id}")
 async def get_groups(id: str):
     conn.execute(teamup_group_data.delete().where(teamup_group_data.c.group_id == id))
-    return conn.execute(teamup_group_data.select()).fetchall()
+    return {"message": "User deleted successfully"}
 
 
 app = FastAPI()
