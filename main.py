@@ -79,7 +79,7 @@ async def update_group_info(id: str, update_group: UpdateGroupModel):
     db_item = conn.execute(teamup_group_data.select().where(teamup_group_data.c.group_id == id)).fetchone()
 
     if db_item is None:
-        raise HTTPException(status_code=404, detail="Group ID of {id} not found")
+        raise HTTPException(status_code=404, detail=f"Group ID of {id} not found")
 
     # Create a dictionary with the updated values
     update_values = {key: value for key, value in update_group.dict().items() if value is not None}
@@ -98,7 +98,7 @@ async def get_groups(id: str):
     db_item = conn.execute(teamup_group_data.select().where(teamup_group_data.c.group_id == id)).fetchone()
 
     if db_item is None:
-        raise HTTPException(status_code=404, detail="Group ID of {id} not found")
+        raise HTTPException(status_code=404, detail=f"Group ID of {id} not found")
         
     conn.execute(teamup_group_data.delete().where(teamup_group_data.c.group_id == id))
     return {"message": "User deleted successfully"}
