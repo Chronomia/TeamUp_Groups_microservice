@@ -1,6 +1,6 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from config.db import connect_with_connector
-from models.group import teamup_group_data
+from models.group import teamup_group_data, teamup_group_user_data, teamup_group_event_data
 from schema.group import GroupModel, UpdateGroupModel
 import uvicorn
 import sqlalchemy
@@ -24,6 +24,7 @@ conn = engine.connect()
 
 router = APIRouter()
 
+"""GET"""
 @router.get("/")
 async def read_root():
     return {"group_service_status": "ONLINE"}
@@ -55,6 +56,7 @@ async def get_group_by_id(id: str):
     return group_data
 
 
+"""POST"""
 @router.post("/groups/create")
 async def create_group(group: GroupModel):
     find = conn.execute(teamup_group_data.select().where(teamup_group_data.c.group_id == group.group_id)).fetchone()
@@ -73,6 +75,7 @@ async def create_group(group: GroupModel):
     return conn.execute(teamup_group_data.select().where(teamup_group_data.c.group_id == group.group_id)).fetchone()
 
 
+"""PUT"""
 @router.put("/groups/update/{id}")
 async def update_group_info(id: str, update_group: UpdateGroupModel):
     # Fetch the current values from the database
@@ -93,15 +96,38 @@ async def update_group_info(id: str, update_group: UpdateGroupModel):
     return conn.execute(teamup_group_data.select().where(teamup_group_data.c.group_id == id)).fetchone()
 
 
+"""DELETE"""
 @router.delete("/groups/delete/{id}")
-async def get_groups(id: str):
+async def delete_group(id: str):
     db_item = conn.execute(teamup_group_data.select().where(teamup_group_data.c.group_id == id)).fetchone()
 
     if not db_item:
         raise HTTPException(status_code=404, detail=f"Group ID of {id} not found")
-        
+
     conn.execute(teamup_group_data.delete().where(teamup_group_data.c.group_id == id))
-    return {"message": "User deleted successfully"}
+    return {"message": "Group deleted successfully"}
+
+
+"""GROUP-USER"""
+@router.get("/groups/{id}/users")
+async def get_group_users_by_id(id: str):
+    group_data = conn.execute(teamup_group_user_data.select().where(teamup_group_user_data.c.group_id == id)).fetchall()
+
+    if not group_data:
+        raise HTTPException(status_code=404, detail=f"Group ID of {id} not found")
+
+    return group_data
+
+
+"""GROUP-EVENT"""
+@router.get("/groups/{id}/events")
+async def get_group_events_by_id(id: str):
+    group_data = conn.execute(teamup_group_event_data.select().where(teamup_group_event_data.c.group_id == id)).fetchall()
+
+    if not group_data:
+        raise HTTPException(status_code=404, detail=f"Group ID of {id} not found")
+
+    return group_data
 
 
 app = FastAPI()

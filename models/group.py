@@ -1,5 +1,5 @@
 from sqlalchemy import Table, Column
-from sqlalchemy.sql.sqltypes import String
+from sqlalchemy.sql.sqltypes import String, Integer
 from sqlalchemy import MetaData
 
 meta = MetaData()
@@ -13,4 +13,16 @@ teamup_group_data = Table(
     Column('category', String),
     Column('intro', String),
     Column('policy', String)
+)
+
+teamup_group_user_data = Table(
+    'teamup_group_user_data', meta,
+    Column('group_id', String),
+    Column('username', String)
+)
+
+teamup_group_event_data = Table(
+    'teamup_group_event_data', meta,
+    Column('group_id', String),
+    Column('event_id', Integer)
 )
