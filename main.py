@@ -1,101 +1,76 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import List
-import uvicorn
+from fastapi import FastAPI, APIRouter
+from config.db import connect_with_connector
+from models.group import teamup_group_data
+from schema.group import GroupModel
+
+
+engine = connect_with_connector()
+conn = engine.connect()
+# with engine.connect() as connection:
+#     result = connection.execute(sqlalchemy.text("""
+#     select * 
+#     from `teamup-group-db`.`teamup_group_data` 
+#     limit 3
+#     """)).fetchall()
+
+#     print(result)
+
+# SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Base = declarative_base()
+
+
+
+router = APIRouter()
+
+@router.get("/")
+async def read_root():
+    return {"group_service_status": "ONLINE"}
+
+@router.get("/groups")
+async def get_groups():
+    return conn.execute(teamup_group_data.select()).fetchall()
+
+
+# @router.get("/groups/{id}")
+# async def get_group_by_id(id: str):
+#     return conn.execute(teamup_group_data.select().where(teamup_group_data.c.group_id == id)).fetchall()
+
+
+# @router.post("/groups")
+# async def create_group(group: GroupModel):
+#     conn.execute(teamup_group_data.insert().values(
+#         group_id = group.group_id,
+#         groupname = group.groupname,
+#         organizer = group.organizer,
+#         location = group.location,
+#         category = group.category,
+#         intro = group.intro,
+#         policy = group.policy
+#     ))
+#     return conn.execute(teamup_group_data.select()).fetchall()
+
+
+# @router.put("/groups/{id}")
+# async def update_group_info(id: str, group: GroupModel):
+#     conn.execute(teamup_group_data.update(
+#         groupname = group.groupname,
+#         organizer = group.organizer,
+#         location = group.location,
+#         category = group.category,
+#         intro = group.intro,
+#         policy = group.policy
+#     ).where(teamup_group_data.c.group_id == id))
+#     return conn.execute(teamup_group_data.select()).fetchall()
+
+# @router.delete("/groups/{id}")
+# async def get_groups(id: str):
+#     conn.execute(teamup_group_data.delete().where(teamup_group_data.c.group_id == id))
+#     return conn.execute(teamup_group_data.select()).fetchall()
+
 
 app = FastAPI()
+app.include_router(router)
 
-### Groups
-# Sample data
-groups = [
-    {'id': 1, 'name': 'Hiking'},
-    {'id': 2, 'name': 'CityWalk'}
-]
-
-
-class Group(BaseModel):
-    id: int
-    name: str
-
-
-@app.get("/")
-def read_root():
-    return {"message": "Hello, World"}
-
-
-@app.get("/api/groups", response_model=List[Group])
-def get_groups():
-    return groups
-
-
-@app.get("/api/groups/{group_id}", response_model=Group)
-def get_group(group_id: int):
-    group = next((g for g in groups if g['id'] == group_id), None)
-    if not group:
-        raise HTTPException(status_code=404, detail='Group not found')
-    return group
-
-
-@app.post("/api/groups", response_model=Group)
-def create_group(group: Group):
-    groups.append(group.model_dump())
-    return group
-
-
-@app.get("/api/groups/{group_id}/users")
-def get_group_users(group_id: int):
-    # Sample data, you'd replace this with a query to your data source
-    users = [{'id': 1, 'name': 'Alice'}, {'id': 2, 'name': 'Bob'}]
-    return users
-
-
-@app.get("/api/groups/{group_id}/events")
-def get_group_events(group_id: int):
-    # Sample data, you'd replace this with a query to your data source
-    events = [{'id': 1, 'name': 'Event A'}, {'id': 2, 'name': 'Event B'}]
-    return events
-
-
-@app.get("/api/groups/{group_id}/records")
-def get_group_records(group_id: int):
-    # Sample data, you'd replace this with a query to your data source
-    records = [{'id': 1, 'detail': 'Record A'}, {'id': 2, 'detail': 'Record B'}]
-    return records
-
-
-
-### Records
-# Sample data
-records = [
-    {'id': 1, 'detail': 'Record A'},
-    {'id': 2, 'detail': 'Record B'}
-]
-
-
-class Record(BaseModel):
-    id: int
-    detail: str
-
-
-@app.get("/api/records", response_model=List[Record])
-def get_records():
-    return records
-
-
-@app.get("/api/records/{record_id}", response_model=Record)
-def get_record(record_id: int):
-    record = next((r for r in records if r['id'] == record_id), None)
-    if not record:
-        raise HTTPException(status_code=404, detail='Record not found')
-    return record
-
-
-@app.get("/api/records/{record_id}/group")
-def get_record_group(record_id: int):
-    # Sample data, you'd replace this with a query to your data source
-    group = [{'id': 1, 'name': 'Hiking'}]
-    return group
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8000)
