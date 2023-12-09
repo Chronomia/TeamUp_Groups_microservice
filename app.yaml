@@ -1,2 +1,8 @@
 runtime: python37
 entrypoint: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
+
+env_variables:
+  CLOUD_SQL_USERNAME: dbuser
+  CLOUD_SQL_PASSWORD: dbuserdbuser
+  CLOUD_SQL_DATABASE_NAME: teamup-group-db
+  CLOUD_SQL_CONNECTION_NAME: coms6156-f23-sixguys:us-east1:teamup-group-mysql-db
