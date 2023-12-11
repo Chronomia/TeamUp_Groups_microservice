@@ -1,8 +1,8 @@
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, HttpUrl
+from typing import Optional, Dict
 
 """
-Group: GET, PUT, POST, DELETE
+Resource Model for response 
 """
 class GroupModel(BaseModel):
     group_id: str
@@ -12,6 +12,17 @@ class GroupModel(BaseModel):
     category: str
     intro: str
     policy: str
+
+class GroupFullModel(BaseModel):
+    group_id: str
+    groupname: str
+    organizer: str
+    location: str
+    category: str
+    intro: str
+    policy: str
+    records: Dict[str, HttpUrl]
+    events: Dict[str, HttpUrl]
 
 class UpdateGroupModel(BaseModel):
     groupname: Optional[str] = None

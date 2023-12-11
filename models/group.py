@@ -4,6 +4,10 @@ from sqlalchemy import MetaData
 
 meta = MetaData()
 
+"""
+Model for sqlalchemy engine
+"""
+
 teamup_group_data = Table(
     'teamup_group_data', meta, 
     Column('group_id', String),
