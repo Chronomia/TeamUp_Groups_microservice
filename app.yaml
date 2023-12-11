@@ -5,4 +5,4 @@ env_variables:
   CLOUD_SQL_USERNAME: dbuser
   CLOUD_SQL_PASSWORD: dbuserdbuser
   CLOUD_SQL_DATABASE_NAME: teamup-group-db
-  CLOUD_SQL_CONNECTION_NAME: coms6156-f23-sixguys:us-east1:teamup-group-mysql-db
+  CLOUD_SQL_CONNECTION_NAME: coms6156-f23-sixguys:us-east1:teamup-group-mysql-db1
