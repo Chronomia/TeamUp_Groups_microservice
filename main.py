@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from config.db import connect_with_connector
-from models.group import teamup_group_data, teamup_group_user_data, teamup_group_event_data
-from schema.group import GroupModel, UpdateGroupModel
+from models.group import teamup_group_data, teamup_group_member_rel_data
+from schema.group import GroupModel, UpdateGroupModel, GroupMemberModel
 import uvicorn
 import sqlalchemy
 from typing import Optional
@@ -24,6 +24,7 @@ conn = engine.connect()
 
 router = APIRouter()
 
+"""Group Service"""
 """GET"""
 @router.get("/")
 async def read_root():
@@ -65,8 +66,8 @@ async def create_group(group: GroupModel):
     
     conn.execute(teamup_group_data.insert().values(
         group_id = group.group_id,
-        groupname = group.groupname,
-        organizer = group.organizer,
+        group_name = group.group_name,
+        founder = group.founder,
         location = group.location,
         category = group.category,
         intro = group.intro,
@@ -108,26 +109,65 @@ async def delete_group(id: str):
     return {"message": "Group deleted successfully"}
 
 
-"""GROUP-USER"""
-@router.get("/groups/{id}/users")
-async def get_group_users_by_id(id: str):
-    group_data = conn.execute(teamup_group_user_data.select().where(teamup_group_user_data.c.group_id == id)).fetchall()
+
+
+"""Group Member Relationship Service"""
+@router.get("/group_member_rel/user/{username}")
+async def get_groups_by_username(username: str):
+    user_url = '/users/name/' + username
+    group_data = conn.execute(teamup_group_member_rel_data.select().where(teamup_group_member_rel_data.c.username == user_url)).fetchall()
 
     if not group_data:
-        raise HTTPException(status_code=404, detail=f"Group ID of {id} not found")
+        raise HTTPException(status_code=404, detail=f"User name of {username} not found")
 
     return group_data
 
 
-"""GROUP-EVENT"""
-@router.get("/groups/{id}/events")
-async def get_group_events_by_id(id: str):
-    group_data = conn.execute(teamup_group_event_data.select().where(teamup_group_event_data.c.group_id == id)).fetchall()
+@router.get("/group_member_rel/group/{group_id}")
+async def get_members_by_group(group_id: str):
+    group_url = '/groups/' + group_id
+    member_data = conn.execute(teamup_group_member_rel_data.select().where(teamup_group_member_rel_data.c.group_id == group_url)).fetchall()
 
-    if not group_data:
-        raise HTTPException(status_code=404, detail=f"Group ID of {id} not found")
+    if not member_data:
+        raise HTTPException(status_code=404, detail=f"Group id of {group_id} not found")
 
-    return group_data
+    return member_data
+
+
+@router.post("/group_member_rel/join")
+async def user_join_group(body: GroupMemberModel):
+    group_url = '/groups/' + body.group_id
+    user_url =  '/users/name/' + body.username
+    find = conn.execute(teamup_group_member_rel_data.select().where(
+                        (teamup_group_member_rel_data.c.group_id == group_url) & 
+                        (teamup_group_member_rel_data.c.username == user_url))).fetchone()
+    if find:
+        raise HTTPException(status_code=409, detail=f"User {body.username} already in the group {group_id}")
+    
+    conn.execute(teamup_group_member_rel_data.insert().values(
+        group_id = group_url,
+        username = user_url
+    ))
+    return conn.execute(teamup_group_member_rel_data.select().where(
+                        (teamup_group_member_rel_data.c.group_id == group_url) & 
+                        (teamup_group_member_rel_data.c.username == user_url))).fetchone()
+
+
+@router.delete("/group_member_rel/leave/{group_id}/{username}")
+async def user_leave_group(group_id: str, username: str):
+    group_url = '/groups/' + group_id
+    user_url =  '/users/name/' + username
+    db_item = conn.execute(teamup_group_member_rel_data.select().where(
+                          (teamup_group_member_rel_data.c.group_id == group_url) & 
+                          (teamup_group_member_rel_data.c.username == user_url))).fetchone()
+
+    if not db_item:
+        raise HTTPException(status_code=404, detail=f"User {username} is not in the group {group_id}")
+
+    conn.execute(teamup_group_member_rel_data.delete().where(
+                (teamup_group_member_rel_data.c.group_id == group_url) & 
+                (teamup_group_member_rel_data.c.username == user_url)))
+    return {"message": "User left group successfully"}
 
 
 app = FastAPI()

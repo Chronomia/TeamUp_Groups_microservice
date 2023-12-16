@@ -6,28 +6,23 @@ Resource Model for response
 """
 class GroupModel(BaseModel):
     group_id: str
-    groupname: str
-    organizer: str
+    group_name: str
+    founder: str
     location: str
     category: str
     intro: str
     policy: str
 
-class GroupFullModel(BaseModel):
-    group_id: str
-    groupname: str
-    organizer: str
-    location: str
-    category: str
-    intro: str
-    policy: str
-    records: Dict[str, HttpUrl]
-    events: Dict[str, HttpUrl]
 
 class UpdateGroupModel(BaseModel):
-    groupname: Optional[str] = None
-    organizer: Optional[str] = None
+    group_name: Optional[str] = None
+    founder: Optional[str] = None
     location: Optional[str] = None
     category: Optional[str] = None
     intro: Optional[str] = None
     policy: Optional[str] = None
+
+
+class GroupMemberModel(BaseModel):
+    group_id: str
+    username: str
