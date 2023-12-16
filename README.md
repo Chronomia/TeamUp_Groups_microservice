@@ -27,4 +27,8 @@
 - `/group_member_rel/group/{group_id}`
   - All the members of that group
  
-- `/group_member_rel/join`
+- `/group_member_rel/join` + `body`
+  - user join group
+
+- `/group_member_rel/leave/{group_id}/{username}`
+  - user leave group
