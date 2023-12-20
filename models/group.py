@@ -4,25 +4,23 @@ from sqlalchemy import MetaData
 
 meta = MetaData()
 
+"""
+Model for sqlalchemy engine
+"""
+
 teamup_group_data = Table(
     'teamup_group_data', meta, 
     Column('group_id', String),
-    Column('groupname', String),
-    Column('organizer', String),
+    Column('group_name', String),
+    Column('founder', String),
     Column('location', String),
     Column('category', String),
     Column('intro', String),
     Column('policy', String)
 )
 
-teamup_group_user_data = Table(
-    'teamup_group_user_data', meta,
+teamup_group_member_rel_data = Table(
+    'teamup_group_member_rel', meta,
     Column('group_id', String),
     Column('username', String)
-)
-
-teamup_group_event_data = Table(
-    'teamup_group_event_data', meta,
-    Column('group_id', String),
-    Column('event_id', Integer)
 )
