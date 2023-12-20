@@ -23,15 +23,6 @@ conn = engine.connect()
 
 
 router = APIRouter()
-app = FastAPI()
-app.include_router(router)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
 
 """Group Service"""
 """GET"""
@@ -179,7 +170,16 @@ async def user_leave_group(group_id: str, username: str):
     return {"message": "User left group successfully"}
 
 
+app = FastAPI()
+app.include_router(router)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 
 if __name__ == '__main__':
