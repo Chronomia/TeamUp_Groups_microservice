@@ -2,7 +2,7 @@ from pydantic import BaseModel, HttpUrl
 from typing import Optional, Dict
 
 """
-Resource Model for response 
+Resource Model for REST API response, useless for GraphQL
 """
 class GroupModel(BaseModel):
     group_id: str

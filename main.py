@@ -1,25 +1,25 @@
 from fastapi import FastAPI, APIRouter, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
+from controllers.group import graphql_router
+
+app = FastAPI()
+app.include_router(graphql_router)
+
+
+
+
+
+'''
 from config.db import connect_with_connector
+from fastapi.middleware.cors import CORSMiddleware
+
 from models.group import teamup_group_data, teamup_group_member_rel_data
 from schema.group import GroupModel, UpdateGroupModel, GroupMemberModel
 import uvicorn
 import sqlalchemy
 from typing import Optional
 
-engine = connect_with_connector()
-conn = engine.connect()
-# with engine.connect() as connection:
-#     result = connection.execute(sqlalchemy.text("""
-#     select * 
-#     from `teamup-group-db`.`teamup_group_data` 
-#     limit 3
-#     """)).fetchall()
 
-#     print(result)
 
-# SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-# Base = declarative_base()
 
 
 router = APIRouter()
@@ -180,7 +180,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-
+'''
 
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8080)
