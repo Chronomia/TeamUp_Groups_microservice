@@ -13,9 +13,11 @@
 
 - `/groups/create` + `body`
   - create a group
+  - support smartystreets api check: whether city & state is valid
 
 - `/groups/update/{group_id}` + `body`
-  - update group detail info, except group_id
+  - update any group detail info, except group_id
+  - support smartystreets api check: whether city & state is valid
  
 - `/groups/delete/{group_id}`
   - delete a group
@@ -32,3 +34,22 @@
 
 - `/group_member_rel/leave/{group_id}/{username}`
   - user leave group
+
+### GraphQL query
+- `/graphql`
+  ```
+  query Ex{
+    groups {
+      groupId
+      groupName
+    }
+  }
+  ```
+  ```
+  query Ex{
+    group(groupId: "some id"){
+      groupId
+      groupName
+    }
+  }
+  ```
