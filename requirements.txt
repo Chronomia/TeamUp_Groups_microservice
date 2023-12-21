@@ -11,4 +11,4 @@ websockets==11.0
 uvicorn==0.22.0
 cloud-sql-python-connector[pymysql]
 graphql-core==3.2.3
-strawberry-graphql==0.217.0
+strawberry-graphql==0.196.0
