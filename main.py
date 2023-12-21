@@ -80,9 +80,9 @@ async def update_group_info(id: str, update_group: UpdateGroupModel):
         raise HTTPException(status_code=404, detail=f"Group ID of {id} not found")
 
     # validate the city and state name using smartystreets
-    cities = city_validate(group.city, group.state)
+    cities = city_validate(update_group.city, update_group.state)
     if not cities:
-        raise HTTPException(status_code=422, detail=f"The city {group.city} and state {group.state} you enter is not valid")
+        raise HTTPException(status_code=422, detail=f"The city {update_group.city} and state {update_group.state} you enter is not valid")
 
     # Create a dictionary with the updated values
     update_values = {key: value for key, value in update_group.dict().items() if value is not None}

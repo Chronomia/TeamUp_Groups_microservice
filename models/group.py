@@ -14,7 +14,7 @@ teamup_group_data = Table(
     Column('group_name', String),
     Column('founder', String),
     Column('city', String),
-    Column('state', String)
+    Column('state', String),
     Column('category', String),
     Column('intro', String),
     Column('policy', String)
