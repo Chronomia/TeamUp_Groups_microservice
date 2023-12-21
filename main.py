@@ -1,10 +1,7 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from controllers.group import graphql_router
 from config.db import conn
-
-
-# from fastapi.middleware.cors import CORSMiddleware
-
+from fastapi.middleware.cors import CORSMiddleware
 from models.group import teamup_group_data, teamup_group_member_rel_data
 from schema.group import GroupModel, UpdateGroupModel, GroupMemberModel
 import uvicorn
@@ -164,7 +161,6 @@ app = FastAPI()
 app.include_router(router)
 app.include_router(graphql_router)
 
-'''
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
@@ -172,7 +168,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-'''
+
 
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8080)
