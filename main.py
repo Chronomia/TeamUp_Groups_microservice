@@ -1,25 +1,12 @@
 from fastapi import FastAPI, APIRouter, HTTPException
+from controllers.group import graphql_router
+from config.db import conn
 from fastapi.middleware.cors import CORSMiddleware
-from config.db import connect_with_connector
 from models.group import teamup_group_data, teamup_group_member_rel_data
 from schema.group import GroupModel, UpdateGroupModel, GroupMemberModel
 import uvicorn
 import sqlalchemy
 from typing import Optional
-
-engine = connect_with_connector()
-conn = engine.connect()
-# with engine.connect() as connection:
-#     result = connection.execute(sqlalchemy.text("""
-#     select * 
-#     from `teamup-group-db`.`teamup_group_data` 
-#     limit 3
-#     """)).fetchall()
-
-#     print(result)
-
-# SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-# Base = declarative_base()
 
 
 router = APIRouter()
@@ -172,6 +159,7 @@ async def user_leave_group(group_id: str, username: str):
 
 app = FastAPI()
 app.include_router(router)
+app.include_router(graphql_router)
 
 app.add_middleware(
     CORSMiddleware,
