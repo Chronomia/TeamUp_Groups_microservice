@@ -7,6 +7,7 @@ from schema.group import GroupModel, UpdateGroupModel, GroupMemberModel
 import uvicorn
 import sqlalchemy
 from typing import Optional
+from external.city_validate import city_validate
 
 
 router = APIRouter()
@@ -19,7 +20,7 @@ async def read_root():
 
 
 @router.get("/groups")
-async def get_groups(category: Optional[str] = None, location: Optional[str] = None, page: int = 1, page_size: int = 5):
+async def get_groups(category: Optional[str] = None, city: Optional[str] = None, page: int = 1, page_size: int = 5):
     offset = (page - 1) * page_size
     query = (
         teamup_group_data.select()
@@ -28,8 +29,8 @@ async def get_groups(category: Optional[str] = None, location: Optional[str] = N
     )
     if category:
         query = query.where(teamup_group_data.c.category == category)
-    if location:
-        query = query.where(teamup_group_data.c.location == location)
+    if city:
+        query = query.where(teamup_group_data.c.city == city)
         
     return conn.execute(query).fetchall()
 
@@ -51,11 +52,17 @@ async def create_group(group: GroupModel):
     if find:
         raise HTTPException(status_code=409, detail=f"Group ID of {group.group_id} already taken")
     
+    # validate the city and state name using smartystreets
+    cities = city_validate(group.city, group.state)
+    if not cities:
+        raise HTTPException(status_code=422, detail=f"The city {group.city} and state {group.state} you enter is not valid")
+
     conn.execute(teamup_group_data.insert().values(
         group_id = group.group_id,
         group_name = group.group_name,
         founder = group.founder,
-        location = group.location,
+        city = group.city,
+        state = group.state,
         category = group.category,
         intro = group.intro,
         policy = group.policy
@@ -71,6 +78,11 @@ async def update_group_info(id: str, update_group: UpdateGroupModel):
 
     if not db_item:
         raise HTTPException(status_code=404, detail=f"Group ID of {id} not found")
+
+    # validate the city and state name using smartystreets
+    cities = city_validate(update_group.city, update_group.state)
+    if not cities:
+        raise HTTPException(status_code=422, detail=f"The city {update_group.city} and state {update_group.state} you enter is not valid")
 
     # Create a dictionary with the updated values
     update_values = {key: value for key, value in update_group.dict().items() if value is not None}

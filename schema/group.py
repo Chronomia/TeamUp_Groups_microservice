@@ -8,7 +8,8 @@ class GroupModel(BaseModel):
     group_id: str
     group_name: str
     founder: str
-    location: str
+    city: str
+    state: str
     category: str
     intro: str
     policy: str
@@ -17,7 +18,8 @@ class GroupModel(BaseModel):
 class UpdateGroupModel(BaseModel):
     group_name: Optional[str] = None
     founder: Optional[str] = None
-    location: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
     category: Optional[str] = None
     intro: Optional[str] = None
     policy: Optional[str] = None
