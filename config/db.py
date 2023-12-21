@@ -38,3 +38,7 @@ def connect_with_connector() -> sqlalchemy.engine.base.Engine:
         # ...
     )
     return pool
+
+
+engine = connect_with_connector()
+conn = engine.connect()
