@@ -13,7 +13,8 @@ class Group:
     group_id: str
     group_name: str
     founder: str
-    location: str
+    city: str
+    state: str
     category: str
     intro: str
     policy: str
