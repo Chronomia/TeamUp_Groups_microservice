@@ -6,7 +6,7 @@
 
 - `/groups`
   - return all groups,
-  - filter by `category`, `location`, `page`, `page_size`
+  - filter by `category`, `city`, `page`, `page_size`
 
 - `/groups/{group_id}`
   - detail info of a group
