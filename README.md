@@ -5,8 +5,9 @@
   -  {"group_service_status": "ONLINE"}
 
 - `/groups`
-  - return all groups,
-  - filter by `category`, `city`, `page`, `page_size`
+  - return all groups
+  - pagination implemented. `page`, `page_size`
+  - filter by `category`, `city`
 
 - `/groups/{group_id}`
   - detail info of a group
